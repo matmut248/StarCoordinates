@@ -3,6 +3,8 @@ var margin = 25;
 var width = window.innerWidth;
 var height = window.innerHeight;
 var origin = {"x": (width/2 - 25) ,"y":height/2};       //origin of the axes
+var mvd = 0;                                 //max value of axes domain, updated by setAxesDomain()
+var xOrder = [x1,x2,x3,x4,x5]               //clockwise order of axis, updated reversing axes 
 
 //xN is the scale for xN-axis
 var x1 = d3.scaleLinear().range([height/2 - margin, 0]);
@@ -23,11 +25,23 @@ var svg = d3.select("body").append("svg")
     .attr("width", width - margin)
     .attr("height", height - margin);
 
-//set axes domain based on max value
 
+//set axes domain based on max value (about all attributes of all objects)
 function setAxesDomain(data){
-    var values = 
-    x1Axis.domain()
+    var maxValue =0;
+    for (var i=0; i < data.length; i++ ){
+        var attrArray = d3.values(data[i]["attributes"]);
+        currentMax = d3.max(attrArray);
+        if(maxValue < currentMax){
+            maxValue = currentMax;
+        }
+    }
+    maxValueDomain = maxValue;
+    x1.domain([0,maxValue]);
+    x2.domain([0,maxValue]);
+    x3.domain([0,maxValue]);
+    x4.domain([0,maxValue]);
+    x5.domain([0,maxValue]);
 }
 
 //drawing axes
@@ -90,9 +104,9 @@ function drawDials(){
         .attr("d",firstDial)
         .attr("transform","rotate(288,"+origin.x+","+origin.y+")")
         .attr("fill","white")
-        
 }
 
+//reverse axes on mouseover or mouseout
 function reverseAxes(){
     svg.select(".firstDial").on("mouseover", function(){
         svg.select(".x1Axis").transition().duration(2000)
@@ -156,24 +170,51 @@ function reverseAxes(){
     });
 }
 
-/*
+
 function drawCasePoints(data){
-    var values = data["values"]
+    var values = [];
+    for (var i=0; i < data.length; i++ ){
+        values[i] =data[i]["attributes"];
+    }
+    var circles = svg.selectAll(".datapoint").data(values)
+        .attr("class", "dataPoint")
+        .attr("cx",function (d) {
+            return origin.x + x2(mvd-d.attr2)*0.95 + x3(mvd-d.attr3)*0.58 - x4(mvd-d.attr4)*0.58 - x5(mvd-d.attr5)*0.95;
+        })
+        .attr("cy",function (d) {
+            return origin.y - x1(mvd-d.attr1) - x2(mvd-d.attr2)*0.31 + x3(mvd-d.attr3)*0.8 + x4(mvd-d.attr4)*0.8 - x5(mvd-d.attr5)*0.31;
+        })
+        .attr("r",5)
+        .attr("fill","blue");
 
-}*/
+    circles.enter().append("circle")
+        .attr("class", "dataPoint")
+        .attr("cx",function (d) {
+            return origin.x + x2(mvd-d.attr2)*0.95 + x3(mvd-d.attr3)*0.58 - x4(mvd-d.attr4)*0.58 - x5(mvd-d.attr5)*0.95;
+        })
+        .attr("cy",function (d) {
+            return origin.y - x1(mvd-d.attr1) - x2(mvd-d.attr2)*0.31 + x3(mvd-d.attr3)*0.8 + x4(mvd-d.attr4)*0.8 - x5(mvd-d.attr5)*0.31;
+        })
+        .attr("r",5)
+        .attr("fill","blue");
+    
+    circles.exit().remove();
 
-d3.json("../data/dataset.json")
+
+}
+
+
+d3.json("data/dataset.json")
 	.then(function(data) {
-        //setAxesDomain(data);
+        setAxesDomain(data);
         drawDials();
         drawAxes();
         reverseAxes();
-        //drawCasePoints(data);
+        drawCasePoints(data);
     })
     .catch(function(error) {
 		console.log(error);
   	});
-
 
 
 
