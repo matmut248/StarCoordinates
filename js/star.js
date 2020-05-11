@@ -2,23 +2,19 @@
 var margin = 25;
 var width = window.innerWidth;
 var height = window.innerHeight;
-var origin = {"x": (width/2 - 25) ,"y":height/2};       //origin of the axes
-var mvd = 0;                                 //max value of axes domain, updated by setAxesDomain()
-var xOrder = [x1,x2,x3,x4,x5]               //clockwise order of axis, updated reversing axes 
+var origin = {"x": (width/2 - 25) ,"y":height/2};           //origin of the axes
+var mvd = 0;                                                //max value of axes domain, updated by setAxesDomain()
+var attrOrder = ["attr1","attr2","attr3","attr4","attr5"]   //order of attributes based to clockwise order of axes
 
-//xN is the scale for xN-axis
-var x1 = d3.scaleLinear().range([height/2 - margin, 0]);
-var x2 = d3.scaleLinear().range([height/2 - margin, 0]);
-var x3 = d3.scaleLinear().range([height/2 - margin, 0]);
-var x4 = d3.scaleLinear().range([height/2 - margin, 0]);
-var x5 = d3.scaleLinear().range([height/2 - margin, 0]);
+//x is the scale for xN-axis
+var x = d3.scaleLinear().range([height/2 - margin, 0]);
 
 //axes
-var x1Axis = d3.axisLeft(x1).ticks(5).tickSize(1);
-var x2Axis = d3.axisLeft(x2).ticks(5).tickSize(1);
-var x3Axis = d3.axisLeft(x3).ticks(5).tickSize(1);
-var x4Axis = d3.axisLeft(x4).ticks(5).tickSize(1);
-var x5Axis = d3.axisLeft(x5).ticks(5).tickSize(1);
+var x1Axis = d3.axisLeft(x).ticks(5).tickSize(1);
+var x2Axis = d3.axisLeft(x).ticks(5).tickSize(1);
+var x3Axis = d3.axisLeft(x).ticks(5).tickSize(1);
+var x4Axis = d3.axisLeft(x).ticks(5).tickSize(1);
+var x5Axis = d3.axisLeft(x).ticks(5).tickSize(1);
 
 //container
 var svg = d3.select("body").append("svg")
@@ -36,12 +32,8 @@ function setAxesDomain(data){
             maxValue = currentMax;
         }
     }
-    maxValueDomain = maxValue;
-    x1.domain([0,maxValue]);
-    x2.domain([0,maxValue]);
-    x3.domain([0,maxValue]);
-    x4.domain([0,maxValue]);
-    x5.domain([0,maxValue]);
+    mvd = maxValue;
+    x.domain([0,maxValue]);
 }
 
 //drawing axes
@@ -107,114 +99,144 @@ function drawDials(){
 }
 
 //reverse axes on mouseover or mouseout
-function reverseAxes(){
+function reverseAxes(data){
     svg.select(".firstDial").on("mouseover", function(){
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + margin + ")");
+        drawCasePoints(data,["attr2","attr1","attr3","attr4","attr5"]);
     });
     svg.select(".firstDial").on("mouseout", function(){
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + margin + ")");
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,attrOrder);
     });
     svg.select(".secondDial").on("mouseover", function(){
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,["attr1","attr3","attr2","attr4","attr5"]);
     });
     svg.select(".secondDial").on("mouseout", function(){
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,attrOrder);
     });
     svg.select(".thirdDial").on("mouseover", function(){
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,["attr1","attr2","attr4","attr3","attr5"]);
     });
     svg.select(".thirdDial").on("mouseout", function(){
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,attrOrder);
     });
     svg.select(".fourthDial").on("mouseover", function(){
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,["attr1","attr2","attr3","attr5","attr4"]);
     });
     svg.select(".fourthDial").on("mouseout", function(){
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,attrOrder);
     });
     svg.select(".fifthDial").on("mouseover", function(){
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(360),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
+            drawCasePoints(data,["attr5","attr2","attr3","attr4","attr1"])
     });
     svg.select(".fifthDial").on("mouseout", function(){
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(360),translate(0," + (-origin.y+margin) + ")");
+        drawCasePoints(data,attrOrder);
     });
 }
 
-
-function drawCasePoints(data){
+function drawCasePoints(data, attrOrder){
     var values = [];
     for (var i=0; i < data.length; i++ ){
-        values[i] =data[i]["attributes"];
+        values[i] = data[i]["attributes"];
+        values[i].label = data[i]["label"];
     }
     var circles = svg.selectAll(".datapoint").data(values)
-        .attr("class", "dataPoint")
+        
+    circles.transition().duration(2000)
         .attr("cx",function (d) {
-            return origin.x + x2(mvd-d.attr2)*0.95 + x3(mvd-d.attr3)*0.58 - x4(mvd-d.attr4)*0.58 - x5(mvd-d.attr5)*0.95;
+            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
         })
         .attr("cy",function (d) {
-            return origin.y - x1(mvd-d.attr1) - x2(mvd-d.attr2)*0.31 + x3(mvd-d.attr3)*0.8 + x4(mvd-d.attr4)*0.8 - x5(mvd-d.attr5)*0.31;
+            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
         })
-        .attr("r",5)
-        .attr("fill","blue");
+        .attr("r",5);
 
     circles.enter().append("circle")
         .attr("class", "dataPoint")
         .attr("cx",function (d) {
-            return origin.x + x2(mvd-d.attr2)*0.95 + x3(mvd-d.attr3)*0.58 - x4(mvd-d.attr4)*0.58 - x5(mvd-d.attr5)*0.95;
+            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
         })
         .attr("cy",function (d) {
-            return origin.y - x1(mvd-d.attr1) - x2(mvd-d.attr2)*0.31 + x3(mvd-d.attr3)*0.8 + x4(mvd-d.attr4)*0.8 - x5(mvd-d.attr5)*0.31;
+            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
         })
         .attr("r",5)
-        .attr("fill","blue");
+        .attr("fill","blue")
     
     circles.exit().remove();
+        
+    var labels = svg.selectAll(".labels").data(values)
 
+    labels.exit().remove();
+
+    labels.enter().append("text")
+        .attr("class","labels")
+        .attr("x",function (d) {
+            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
+        })
+        .attr("y",function (d) {
+            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
+        })
+        .attr("transform","translate(-10,-8)")
+        .text(function (d) {return d.label});
+        
+    labels.transition().duration(2000)
+        .attr("x",function (d) {
+            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
+        })
+        .attr("y",function (d) {
+            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
+        })
+        .attr("transform","translate(-10,-8)")
+        .text(function (d) {return d.label});
 
 }
-
 
 d3.json("data/dataset.json")
 	.then(function(data) {
         setAxesDomain(data);
         drawDials();
         drawAxes();
-        reverseAxes();
-        drawCasePoints(data);
+        reverseAxes(data);
+        drawCasePoints(data,attrOrder);
     })
     .catch(function(error) {
 		console.log(error);
-  	});
-
-
-
+    });
