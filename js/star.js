@@ -2,8 +2,7 @@
 var margin = 25;
 var width = window.innerWidth;
 var height = window.innerHeight;
-var origin = {"x": (width/2 - 25) ,"y":height/2};           //origin of the axes
-var mvd = 0;                                                //max value of axes domain, updated by setAxesDomain()
+var origin = {"x": (width/2 - margin) ,"y":height/2};           //origin of the axes
 var attrOrder = ["attr1","attr2","attr3","attr4","attr5"]   //order of attributes based to clockwise order of axes
 
 //x is the scale for xN-axis
@@ -32,7 +31,6 @@ function setAxesDomain(data){
             maxValue = currentMax;
         }
     }
-    mvd = maxValue;
     x.domain([0,maxValue]);
 }
 
@@ -63,6 +61,12 @@ function drawAxes(){
         .attr("transform", "translate(" + (width/2-margin) + "," + height/2 +"),rotate(288),translate(0," + (-height/2+margin) + ")")
         .call(x5Axis)
         .select(".tick").attr("visibility","hidden");           //hidden first tick
+
+    //rotate tick's text
+    svg.select(".x2Axis").selectAll(".tick").select("text").attr("transform","translate(-8,-6)rotate(-72)");
+    svg.select(".x3Axis").selectAll(".tick").select("text").attr("transform","translate(-12,-4)rotate(-142)");
+    svg.select(".x4Axis").selectAll(".tick").select("text").attr("transform","translate(-14,4)rotate(142)");
+    svg.select(".x5Axis").selectAll(".tick").select("text").attr("transform","translate(-10,5)rotate(72)");
 }
 
 //path to identify dials between two axes
@@ -100,74 +104,119 @@ function drawDials(){
 
 //reverse axes on mouseover or mouseout
 function reverseAxes(data){
+    // FIRST DIAL
     svg.select(".firstDial").on("mouseover", function(){
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-8,-6)rotate(-72)");
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + margin + ")");
+        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","rotate(0)");
         drawCasePoints(data,["attr2","attr1","attr3","attr4","attr5"]);
     });
     svg.select(".firstDial").on("mouseout", function(){
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + margin + ")");
+        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","rotate(0)");
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-8,-6)rotate(-72)");
         drawCasePoints(data,attrOrder);
     });
+    // SECOND DIAL
     svg.select(".secondDial").on("mouseover", function(){
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-12,-4)rotate(-142)");
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-8,-6)rotate(-72)");
         drawCasePoints(data,["attr1","attr3","attr2","attr4","attr5"]);
     });
     svg.select(".secondDial").on("mouseout", function(){
         svg.select(".x2Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-8,-6)rotate(-72)");
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-12,-4)rotate(-142)");
         drawCasePoints(data,attrOrder);
     });
+    // THIRD DIAL
     svg.select(".thirdDial").on("mouseover", function(){
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-14,4)rotate(142)");
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-12,-4)rotate(-142)");
         drawCasePoints(data,["attr1","attr2","attr4","attr3","attr5"]);
     });
     svg.select(".thirdDial").on("mouseout", function(){
         svg.select(".x3Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-12,-4)rotate(-142)");
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-14,4)rotate(142)");
         drawCasePoints(data,attrOrder);
     });
+    // FOURTH DIAL
     svg.select(".fourthDial").on("mouseover", function(){
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-10,5)rotate(72)");
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-14,4)rotate(142)");
         drawCasePoints(data,["attr1","attr2","attr3","attr5","attr4"]);
     });
     svg.select(".fourthDial").on("mouseout", function(){
         svg.select(".x4Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-14,4)rotate(142)");
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-10,5)rotate(72)");
         drawCasePoints(data,attrOrder);
     });
+    // FIFTH DIAL
     svg.select(".fifthDial").on("mouseover", function(){
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(360),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","rotate(0)");
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-10,5)rotate(72)");
             drawCasePoints(data,["attr5","attr2","attr3","attr4","attr1"])
     });
     svg.select(".fifthDial").on("mouseout", function(){
         svg.select(".x5Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","translate(-10,5)rotate(72)");
         svg.select(".x1Axis").transition().duration(2000)
             .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(360),translate(0," + (-origin.y+margin) + ")");
+        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
+            .attr("transform","rotate(0)");
         drawCasePoints(data,attrOrder);
     });
 }
@@ -182,20 +231,20 @@ function drawCasePoints(data, attrOrder){
         
     circles.transition().duration(2000)
         .attr("cx",function (d) {
-            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
+            return origin.x - x(d[attrOrder[1]])*0.95 - x(d[attrOrder[2]])*0.58 + x(d[attrOrder[3]])*0.58 + x(d[attrOrder[4]])*0.95;
         })
         .attr("cy",function (d) {
-            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
+            return origin.y + x(d[attrOrder[0]]) + x(d[attrOrder[1]])*0.31 - x(d[attrOrder[2]])*0.8 - x(d[attrOrder[3]])*0.8 + x(d[attrOrder[4]])*0.31;
         })
         .attr("r",5);
 
     circles.enter().append("circle")
         .attr("class", "dataPoint")
         .attr("cx",function (d) {
-            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
+            return origin.x - x(d[attrOrder[1]])*0.95 - x(d[attrOrder[2]])*0.58 + x(d[attrOrder[3]])*0.58 + x(d[attrOrder[4]])*0.95;
         })
         .attr("cy",function (d) {
-            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
+            return origin.y + x(d[attrOrder[0]]) + x(d[attrOrder[1]])*0.31 - x(d[attrOrder[2]])*0.8 - x(d[attrOrder[3]])*0.8 + x(d[attrOrder[4]])*0.31;
         })
         .attr("r",5)
         .attr("fill","blue")
@@ -209,20 +258,20 @@ function drawCasePoints(data, attrOrder){
     labels.enter().append("text")
         .attr("class","labels")
         .attr("x",function (d) {
-            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
+            return origin.x - x(d[attrOrder[1]])*0.95 - x(d[attrOrder[2]])*0.58 + x(d[attrOrder[3]])*0.58 + x(d[attrOrder[4]])*0.95;
         })
         .attr("y",function (d) {
-            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
+            return origin.y + x(d[attrOrder[0]]) + x(d[attrOrder[1]])*0.31 - x(d[attrOrder[2]])*0.8 - x(d[attrOrder[3]])*0.8 + x(d[attrOrder[4]])*0.31;
         })
         .attr("transform","translate(-10,-8)")
         .text(function (d) {return d.label});
         
     labels.transition().duration(2000)
         .attr("x",function (d) {
-            return origin.x + x(mvd-d[attrOrder[1]])*0.95 + x(mvd-d[attrOrder[2]])*0.58 - x(mvd-d[attrOrder[3]])*0.58 - x(mvd-d[attrOrder[4]])*0.95;
+            return origin.x - x(d[attrOrder[1]])*0.95 - x(d[attrOrder[2]])*0.58 + x(d[attrOrder[3]])*0.58 + x(d[attrOrder[4]])*0.95;
         })
         .attr("y",function (d) {
-            return origin.y - x(mvd-d[attrOrder[0]]) - x(mvd-d[attrOrder[1]])*0.31 + x(mvd-d[attrOrder[2]])*0.8 + x(mvd-d[attrOrder[3]])*0.8 - x(mvd-d[attrOrder[4]])*0.31;
+            return origin.y + x(d[attrOrder[0]]) + x(d[attrOrder[1]])*0.31 - x(d[attrOrder[2]])*0.8 - x(d[attrOrder[3]])*0.8 + x(d[attrOrder[4]])*0.31;
         })
         .attr("transform","translate(-10,-8)")
         .text(function (d) {return d.label});
