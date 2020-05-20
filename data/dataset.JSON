@@ -42,11 +42,11 @@
     {
         "label" : "obj5",
         "attributes" : {
-            "attr1" : 1,
-            "attr2" : 8,
+            "attr1" : 3,
+            "attr2" : 7,
             "attr3" : 1,
-            "attr4" : 9,
-            "attr5" : 1
+            "attr4" : 8,
+            "attr5" : 2
         }
     },
     {
