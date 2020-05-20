@@ -3,7 +3,15 @@ var margin = 25;
 var width = window.innerWidth;
 var height = window.innerHeight;
 var origin = {"x": (width/2 - margin) ,"y":height/2};           //origin of the axes
-var attrOrder = ["attr1","attr2","attr3","attr4","attr5"]   //order of attributes based to clockwise order of axes
+var updateTime = 2000;
+var axisOrder = [[".x1",".x2"],[".x2",".x3"],[".x3",".x4"],[".x4",".x5"],[".x5",".x1"]];
+var axesToAttr = {".x1" : "attr1", ".x2" : "attr2", ".x3" : "attr3", ".x4" : "attr4", ".x5" : "attr5",}
+var attrOrder = [axesToAttr[axisOrder[0][0]],axesToAttr[axisOrder[1][0]],axesToAttr[axisOrder[2][0]],axesToAttr[axisOrder[3][0]],axesToAttr[axisOrder[4][0]]]
+var axisPos = {first : "translate(" + origin.x + "," + margin + ")",
+            second : "translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")",
+            third : "translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")",
+            fourth : "translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")",
+            fifth : "translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")"};
 
 //x is the scale for xN-axis
 var x = d3.scaleLinear().range([height/2 - margin, 0]);
@@ -36,43 +44,43 @@ function setAxesDomain(data){
 //drawing axes
 function drawAxes(){
     svg.append("g")
-        .attr("class", "x1Axis")
+        .attr("class", "x1")
         .attr("transform", "translate(" + (width/2-margin) + "," + margin + ")")
         .call(x1Axis)
         .select(".tick").attr("visibility","hidden");           //hidden first tick
     svg.append("g")
-        .attr("class", "x2Axis")
+        .attr("class", "x2")
         .attr("transform", "translate(" + (width/2-margin) + "," + height/2 +"),rotate(72),translate(0," + (-height/2+margin) + ")")
         .call(x2Axis)
         .select(".tick").attr("visibility","hidden");           //hidden first tick
     svg.append("g")
-        .attr("class", "x3Axis")
+        .attr("class", "x3")
         .attr("transform", "translate(" + (width/2-margin) + "," + height/2 +"),rotate(144),translate(0," + (-height/2+margin) + ")")
         .call(x3Axis)
         .select(".tick").attr("visibility","hidden")            //hidden first tick
     svg.append("g")
-        .attr("class", "x4Axis")
+        .attr("class", "x4")
         .attr("transform", "translate(" + (width/2-margin) + "," + height/2 +"),rotate(216),translate(0," + (-height/2+margin) + ")")
         .call(x4Axis)
         .select(".tick").attr("visibility","hidden");           //hidden first tick
     svg.append("g")
-        .attr("class", "x5Axis")
+        .attr("class", "x5")
         .attr("transform", "translate(" + (width/2-margin) + "," + height/2 +"),rotate(288),translate(0," + (-height/2+margin) + ")")
         .call(x5Axis)
         .select(".tick").attr("visibility","hidden");           //hidden first tick
 
     //rotate tick's text
-    svg.select(".x2Axis").selectAll(".tick").select("text").attr("transform","translate(-8,-6)rotate(-72)");
-    svg.select(".x3Axis").selectAll(".tick").select("text").attr("transform","translate(-12,-4)rotate(-142)");
-    svg.select(".x4Axis").selectAll(".tick").select("text").attr("transform","translate(-14,4)rotate(142)");
-    svg.select(".x5Axis").selectAll(".tick").select("text").attr("transform","translate(-10,5)rotate(72)");
+    svg.select(".x2").selectAll(".tick").select("text").attr("transform","translate(-8,-6)rotate(-72)");
+    svg.select(".x3").selectAll(".tick").select("text").attr("transform","translate(-12,-4)rotate(-142)");
+    svg.select(".x4").selectAll(".tick").select("text").attr("transform","translate(-14,4)rotate(142)");
+    svg.select(".x5").selectAll(".tick").select("text").attr("transform","translate(-10,5)rotate(72)");
 
     //draw axes label
-    svg.select(".x1axis").append("text").attr("class","axisLabel").text(attrOrder[0]).attr("transform","translate(20,-10)");
-    svg.select(".x2axis").append("text").attr("class","axisLabel").text(attrOrder[1]).attr("transform","translate(15,-15),rotate(-90)");
-    svg.select(".x3axis").append("text").attr("class","axisLabel").text(attrOrder[2]).attr("transform","translate(-5,-35),rotate(-144)");
-    svg.select(".x4axis").append("text").attr("class","axisLabel").text(attrOrder[3]).attr("transform","translate(-30,-10),rotate(144)");
-    svg.select(".x5axis").append("text").attr("class","axisLabel").text(attrOrder[4]).attr("transform","translate(10,20),rotate(90)");
+    svg.select(".x1").append("text").attr("class","axisLabel").text(axesToAttr[".x1"]).attr("transform","translate(20,-10)");
+    svg.select(".x2").append("text").attr("class","axisLabel").text(axesToAttr[".x2"]).attr("transform","translate(15,-15),rotate(-90)");
+    svg.select(".x3").append("text").attr("class","axisLabel").text(axesToAttr[".x3"]).attr("transform","translate(-5,-35),rotate(-144)");
+    svg.select(".x4").append("text").attr("class","axisLabel").text(axesToAttr[".x4"]).attr("transform","translate(-30,-10),rotate(144)");
+    svg.select(".x5").append("text").attr("class","axisLabel").text(axesToAttr[".x5"]).attr("transform","translate(10,20),rotate(90)");
 }
 
 //path to identify dials between two axes
@@ -82,189 +90,150 @@ function drawDials(){
     var firstDial = center + ", V 25,L"+(origin.x +origin.y -45 )+" "+(origin.y-((origin.y - 25)*0.31))+",Z";
 
     svg.append("path")
-        .attr("class","firstDial")
+        .attr("id","firstDial")
+        .attr("class","dial")
         .attr("d",firstDial)
         .attr("background-color","white")
-        .attr("fill","white")
     svg.append("path")
-        .attr("class","secondDial")
+        .attr("id","secondDial")
+        .attr("class","dial")
         .attr("d",firstDial)
         .attr("transform","rotate(72,"+origin.x+","+origin.y+")")
-        .attr("fill","white")
     svg.append("path")
-        .attr("class","thirdDial")
+        .attr("id","thirdDial")
+        .attr("class","dial")
         .attr("d",firstDial)
         .attr("transform","rotate(144,"+origin.x+","+origin.y+")")
-        .attr("fill","white")
     svg.append("path")
-        .attr("class","fourthDial")
+        .attr("id","fourthDial")
+        .attr("class","dial")
         .attr("d",firstDial)
         .attr("transform","rotate(216,"+origin.x+","+origin.y+")")
-        .attr("fill","white")
     svg.append("path")
-        .attr("class","fifthDial")
+        .attr("id","fifthDial")
+        .attr("class","dial")
         .attr("d",firstDial)
         .attr("transform","rotate(288,"+origin.x+","+origin.y+")")
-        .attr("fill","white")
+
+    svg.selectAll(".dial").attr("fill","white").attr("fill-opacity","0");
 }
 
-//reverse axes on mouseover or mouseout
-function reverseAxes(data){
-    // FIRST DIAL
-    svg.select(".firstDial").on("mouseover", function(){
-        svg.select(".x1Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
+function reverse(data){
+    svg.select("#firstDial").on("click", function(){
+        svg.select(axisOrder[0][0]).transition().duration(updateTime)
+            .attr("transform",axisPos.second)
+        svg.select(axisOrder[0][0]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-8,-6)rotate(-72)");
-        svg.select(".x1Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[0][0]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(15,-15),rotate(-90)");
-        svg.select(".x2Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + margin + ")");
-        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        svg.select(axisOrder[0][1]).transition().duration(updateTime)
+            .attr("transform",axisPos.first)
+        svg.select(axisOrder[0][1]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","rotate(0)");
-        svg.select(".x2Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[0][1]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(20,-10)");
-        drawCasePoints(data,["attr2","attr1","attr3","attr4","attr5"]);
-    });
-    svg.select(".firstDial").on("mouseout", function(){
-        svg.select(".x1Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + margin + ")");
-        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","rotate(0)");
-        svg.select(".x1Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(20,-10)");    
-        svg.select(".x2Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-8,-6)rotate(-72)");
-        svg.select(".x2Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(15,-15),rotate(-90)");
-        drawCasePoints(data,attrOrder);
-    });
-    // SECOND DIAL
-    svg.select(".secondDial").on("mouseover", function(){
-        svg.select(".x2Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        var temp = axisOrder[0][0]
+        axisOrder[0][0] = axisOrder[0][1]
+        axisOrder[4][1] = axisOrder[0][1]
+        axisOrder[0][1] = temp
+        axisOrder[1][0] = temp
+        
+        drawCasePoints(data,[axesToAttr[axisOrder[0][0]],axesToAttr[axisOrder[1][0]],axesToAttr[axisOrder[2][0]],axesToAttr[axisOrder[3][0]],axesToAttr[axisOrder[4][0]]])
+    })
+    svg.select("#secondDial").on("click", function () {
+        svg.select(axisOrder[1][0]).transition().duration(updateTime)
+            .attr("transform",axisPos.third)
+        svg.select(axisOrder[1][0]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-12,-4)rotate(-142)");
-        svg.select(".x2Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[1][0]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(-5,-35),rotate(-144)");
-        svg.select(".x3Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        svg.select(axisOrder[1][1]).transition().duration(updateTime)
+            .attr("transform",axisPos.second)
+        svg.select(axisOrder[1][1]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-8,-6)rotate(-72)");
-        svg.select(".x3Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[1][1]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(15,-15),rotate(-90)");
-        drawCasePoints(data,["attr1","attr3","attr2","attr4","attr5"]);
-    });
-    svg.select(".secondDial").on("mouseout", function(){
-        svg.select(".x2Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(72),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x2Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-8,-6)rotate(-72)");
-        svg.select(".x2Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(15,-15),rotate(-90)");
-        svg.select(".x3Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-12,-4)rotate(-142)");
-        svg.select(".x3Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(-5,-35),rotate(-144)");
-        drawCasePoints(data,attrOrder);
-    });
-    // THIRD DIAL
-    svg.select(".thirdDial").on("mouseover", function(){
-        svg.select(".x3Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        var temp = axisOrder[1][0]
+        axisOrder[1][0] = axisOrder[1][1]
+        axisOrder[0][1] = axisOrder[1][1]
+        axisOrder[1][1] = temp
+        axisOrder[2][0] = temp 
+
+        drawCasePoints(data,[axesToAttr[axisOrder[0][0]],axesToAttr[axisOrder[1][0]],axesToAttr[axisOrder[2][0]],axesToAttr[axisOrder[3][0]],axesToAttr[axisOrder[4][0]]])
+    })
+    svg.select("#thirdDial").on("click", function () {
+        svg.select(axisOrder[2][0]).transition().duration(updateTime)
+            .attr("transform", axisPos.fourth)
+        svg.select(axisOrder[2][0]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-14,4)rotate(142)");
-        svg.select(".x3Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[2][0]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(-30,-10),rotate(144)");
-        svg.select(".x4Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        svg.select(axisOrder[2][1]).transition().duration(updateTime)
+            .attr("transform", axisPos.third)
+        svg.select(axisOrder[2][1]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-12,-4)rotate(-142)");
-        svg.select(".x4Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[2][1]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(-5,-35),rotate(-144)");
-        drawCasePoints(data,["attr1","attr2","attr4","attr3","attr5"]);
-    });
-    svg.select(".thirdDial").on("mouseout", function(){
-        svg.select(".x3Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(144),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x3Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-12,-4)rotate(-142)");
-        svg.select(".x3Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(-5,-35),rotate(-144)");
-        svg.select(".x4Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-14,4)rotate(142)");
-        svg.select(".x4Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(-30,-10),rotate(144)");
-        drawCasePoints(data,attrOrder);
-    });
-    // FOURTH DIAL
-    svg.select(".fourthDial").on("mouseover", function(){
-        svg.select(".x4Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        var temp = axisOrder[2][0]
+        axisOrder[2][0] = axisOrder[2][1]
+        axisOrder[1][1] = axisOrder[2][1]
+        axisOrder[2][1] = temp
+        axisOrder[3][0] = temp 
+
+        drawCasePoints(data,[axesToAttr[axisOrder[0][0]],axesToAttr[axisOrder[1][0]],axesToAttr[axisOrder[2][0]],axesToAttr[axisOrder[3][0]],axesToAttr[axisOrder[4][0]]])
+    })
+    svg.select("#fourthDial").on("click", function () {
+        svg.select(axisOrder[3][0]).transition().duration(updateTime)
+            .attr("transform",axisPos.fifth)
+        svg.select(axisOrder[3][0]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-10,5)rotate(72)");
-        svg.select(".x4Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[3][0]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(10,20),rotate(90)");
-        svg.select(".x5Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        svg.select(axisOrder[3][1]).transition().duration(updateTime)
+            .attr("transform",axisPos.fourth)
+        svg.select(axisOrder[3][1]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-14,4)rotate(142)");
-        svg.select(".x5Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[3][1]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(-30,-10),rotate(144)");
-        drawCasePoints(data,["attr1","attr2","attr3","attr5","attr4"]);
-    });
-    svg.select(".fourthDial").on("mouseout", function(){
-        svg.select(".x4Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(216),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x4Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-14,4)rotate(142)");
-        svg.select(".x4Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(-30,-10),rotate(144)");
-        svg.select(".x5Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-10,5)rotate(72)");
-        svg.select(".x5Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(10,20),rotate(90)");
-        drawCasePoints(data,attrOrder);
-    });
-    // FIFTH DIAL
-    svg.select(".fifthDial").on("mouseover", function(){
-        svg.select(".x5Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(360),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        var temp = axisOrder[3][0]
+        axisOrder[3][0] = axisOrder[3][1]
+        axisOrder[2][1] = axisOrder[3][1]
+        axisOrder[3][1] = temp
+        axisOrder[4][0] = temp 
+
+        drawCasePoints(data,[axesToAttr[axisOrder[0][0]],axesToAttr[axisOrder[1][0]],axesToAttr[axisOrder[2][0]],axesToAttr[axisOrder[3][0]],axesToAttr[axisOrder[4][0]]])
+    })
+    svg.select("#fifthDial").on("click",function () {
+        svg.select(axisOrder[4][0]).transition().duration(updateTime)
+            .attr("transform",axisPos.first)
+        svg.select(axisOrder[4][0]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","rotate(0)");
-        svg.select(".x5Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[4][0]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(20,-10)");
-        svg.select(".x1Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
+
+        svg.select(axisOrder[4][1]).transition().duration(updateTime)
+            .attr("transform",axisPos.fifth)
+        svg.select(axisOrder[4][1]).selectAll(".tick").select("text").transition().duration(updateTime)
             .attr("transform","translate(-10,5)rotate(72)");
-        svg.select(".x1Axis").select(".axisLabel").transition().duration(2000)
+        svg.select(axisOrder[4][1]).select(".axisLabel").transition().duration(updateTime)
             .attr("transform","translate(10,20),rotate(90)");
-            drawCasePoints(data,["attr5","attr2","attr3","attr4","attr1"])
-    });
-    svg.select(".fifthDial").on("mouseout", function(){
-        svg.select(".x5Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(288),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x5Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","translate(-10,5)rotate(72)");
-        svg.select(".x5Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(10,20),rotate(90)");
-        svg.select(".x1Axis").transition().duration(2000)
-            .attr("transform","translate(" + origin.x + "," + origin.y +"),rotate(360),translate(0," + (-origin.y+margin) + ")");
-        svg.select(".x1Axis").selectAll(".tick").select("text").transition().duration(2000)
-            .attr("transform","rotate(0)");
-        svg.select(".x1Axis").select(".axisLabel").transition().duration(2000)
-            .attr("transform","translate(20,-10)");
-        drawCasePoints(data,attrOrder);
-    });
+
+        var temp = axisOrder[4][0]
+        axisOrder[4][0] = axisOrder[4][1]
+        axisOrder[3][1] = axisOrder[4][1]
+        axisOrder[4][1] = temp
+        axisOrder[0][0] = temp 
+
+        drawCasePoints(data,[axesToAttr[axisOrder[0][0]],axesToAttr[axisOrder[1][0]],axesToAttr[axisOrder[2][0]],axesToAttr[axisOrder[3][0]],axesToAttr[axisOrder[4][0]]])
+    })
 }
 
 function drawCasePoints(data, attrOrder){
@@ -275,7 +244,7 @@ function drawCasePoints(data, attrOrder){
     }
     var circles = svg.selectAll(".datapoint").data(values)
         
-    circles.transition().duration(2000)
+    circles.transition().duration(updateTime)
         .attr("cx",function (d) {
             return origin.x - x(d[attrOrder[1]])*0.95 - x(d[attrOrder[2]])*0.58 + x(d[attrOrder[3]])*0.58 + x(d[attrOrder[4]])*0.95;
         })
@@ -312,7 +281,7 @@ function drawCasePoints(data, attrOrder){
         .attr("transform","translate(-14,-12)")
         .text(function (d) {return d.label});
         
-    labels.transition().duration(2000)
+    labels.transition().duration(updateTime)
         .attr("x",function (d) {
             return origin.x - x(d[attrOrder[1]])*0.95 - x(d[attrOrder[2]])*0.58 + x(d[attrOrder[3]])*0.58 + x(d[attrOrder[4]])*0.95;
         })
@@ -326,10 +295,11 @@ function drawCasePoints(data, attrOrder){
 d3.json("data/dataset.json")
 	.then(function(data) {
         setAxesDomain(data);
-        drawDials();
         drawAxes();
-        reverseAxes(data);
         drawCasePoints(data,attrOrder);
+        drawDials();
+        reverse(data);
+        
     })
     .catch(function(error) {
 		console.log(error);
